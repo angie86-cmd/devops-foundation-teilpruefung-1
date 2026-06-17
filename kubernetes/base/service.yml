@@ -1,0 +1,28 @@
+# Kubernetes Service for the example microservice.
+# A Service provides a stable network endpoint for a set of Pods.
+# This is important because Pods are temporary and can be recreated with new IP addresses.
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  # Name of the Service resource.
+  name: devops-foundation-microservice
+
+spec:
+  # Selects the Pods that belong to this Service.
+  # The selector must match the labels defined in the Deployment.
+  selector:
+    app: devops-foundation-microservice
+
+  ports:
+    # Expose the Service on port 80 inside the cluster.
+    - protocol: TCP
+      port: 80
+
+      # Forward traffic to port 3000 on the selected Pods.
+      targetPort: 3000
+
+  # ClusterIP exposes the Service only inside the Kubernetes cluster.
+  # For external access, LoadBalancer or Ingress would typically be used.
+  type: ClusterIP

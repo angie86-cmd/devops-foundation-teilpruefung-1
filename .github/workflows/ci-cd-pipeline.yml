@@ -1,0 +1,100 @@
+# CI/CD pipeline for a minimal Node.js microservice.
+# The workflow demonstrates checkout, unit testing, Docker image build,
+# security/quality simulation, deployment simulation, and notification.
+
+name: Microservice CI/CD Pipeline
+
+# The workflow runs automatically on pushes and pull requests to main.
+# It can also be started manually from the GitHub Actions UI.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-deploy:
+    # Use the latest Ubuntu runner provided by GitHub.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step A: Checkout the repository.
+      # This gives the runner access to the source code, Dockerfile and configuration files.
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # Step B: Set up Node.js.
+      # Node.js is required to install dependencies and run unit tests.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Step C: Install dependencies.
+      # The command is executed inside the app folder where package.json is located.
+      - name: Install dependencies
+        working-directory: app
+        run: npm install
+
+      # Step D: Run unit tests.
+      # Unit tests validate the microservice before building the Docker image.
+      - name: Run unit tests
+        working-directory: app
+        run: npm test
+
+      # Step E: Simulate code quality checks.
+      # In a real project, tools such as ESLint or SonarQube could be used here.
+      - name: Simulate code quality checks
+        run: |
+          echo "Running code quality checks..."
+          echo "Example tools: ESLint, SonarQube, code coverage checks."
+          echo "Code quality checks completed successfully."
+
+      # Step F: Build the Docker image.
+      # The Docker image packages the microservice and its runtime environment.
+      - name: Build Docker image
+        run: docker build -t devops-foundation-microservice:${{ github.sha }} ./app
+
+      # Step G: Run tests inside the Docker container.
+      # This verifies that the image contains everything required to execute the service tests.
+      - name: Run unit tests inside Docker image
+        run: docker run --rm devops-foundation-microservice:${{ github.sha }} npm test
+
+      # Step H: Simulate security scanning.
+      # In a production pipeline, tools such as Trivy, Snyk or GitHub Advanced Security
+      # could scan container images and dependencies for vulnerabilities.
+      - name: Simulate security scan
+        run: |
+          echo "Running container and dependency security scan..."
+          echo "Example tools: Trivy, Snyk, Dependabot."
+          echo "Security scan simulation completed successfully."
+
+      # Step I: Simulate pushing the image to a container registry.
+      # In a real project, this could push to GHCR, Docker Hub, AWS ECR or another registry.
+      - name: Simulate Docker image registry push
+        run: |
+          echo "Tagging Docker image..."
+          echo "docker tag devops-foundation-microservice:${{ github.sha }} ghcr.io/angie86-cmd/devops-foundation-microservice:${{ github.sha }}"
+          echo "Pushing Docker image to registry..."
+          echo "docker push ghcr.io/angie86-cmd/devops-foundation-microservice:${{ github.sha }}"
+          echo "Registry push simulation completed successfully."
+
+      # Step J: Simulate deployment to a Kubernetes test environment.
+      # In a real setup, this could update Kubernetes manifests, Helm values,
+      # or trigger a GitOps controller such as Argo CD.
+      - name: Simulate deployment to test environment
+        run: |
+          echo "Deploying microservice to Kubernetes test environment..."
+          echo "kubectl apply -f kubernetes/base/"
+          echo "Deployment simulation completed successfully."
+
+      # Step K: Send a simulated notification.
+      # In a real project, Slack, Microsoft Teams or email notifications could be used.
+      - name: Simulate deployment notification
+        if: success()
+        run: |
+          echo "Notification: CI/CD pipeline completed successfully."
+          echo "The microservice was built, tested, scanned and deployed to the test environment."

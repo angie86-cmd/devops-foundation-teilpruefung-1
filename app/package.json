@@ -1,0 +1,20 @@
+{
+  "name": "devops-foundation-microservice",
+  "version": "1.0.0",
+  "description": "Minimal Node.js microservice used for DevOps Foundation Teilprüfung 1",
+  "main": "app.js",
+  "scripts": {
+    "test": "node test.js",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "devops",
+    "github-actions",
+    "docker",
+    "kubernetes",
+    "terraform",
+    "gitops"
+  ],
+  "author": "Angie Angarita Soto",
+  "license": "MIT"
+}

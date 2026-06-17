@@ -1,0 +1,51 @@
+# Kubernetes Deployment for the example microservice.
+# A Deployment defines the desired state for application Pods and
+# allows Kubernetes to create, update, scale, and replace them automatically.
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  # Name of the Deployment resource.
+  name: devops-foundation-microservice
+
+  # Labels help identify and group related Kubernetes resources.
+  labels:
+    app: devops-foundation-microservice
+
+spec:
+  # Desired number of application replicas.
+  # Kubernetes will try to keep two Pods running.
+  replicas: 2
+
+  # Selector used by the Deployment to identify the Pods it manages.
+  selector:
+    matchLabels:
+      app: devops-foundation-microservice
+
+  # Template used to create new Pods.
+  template:
+    metadata:
+      # Labels assigned to the Pods created by this Deployment.
+      labels:
+        app: devops-foundation-microservice
+
+    spec:
+      containers:
+        # Container running the microservice.
+        - name: microservice
+
+          # Container image used for the application.
+          # In a real pipeline, this tag would usually be updated with
+          # a specific version or commit SHA produced by the CI/CD process.
+          image: ghcr.io/angie86-cmd/devops-foundation-microservice:latest
+
+          # Port exposed by the container inside the Pod.
+          ports:
+            - containerPort: 3000
+
+          # Load non-sensitive environment configuration from a ConfigMap.
+          # Sensitive values should be managed separately with Kubernetes Secrets.
+          envFrom:
+            - configMapRef:
+                name: microservice-config

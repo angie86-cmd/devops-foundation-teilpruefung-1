@@ -1,0 +1,51 @@
+# Argo CD Application example for the development environment.
+# This file illustrates how GitOps can be used to synchronize
+# Kubernetes manifests from a Git repository into a Kubernetes cluster.
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  # Name of the Argo CD Application resource.
+  # This name appears in the Argo CD UI.
+  name: devops-foundation-microservice-dev
+
+  # Argo CD Application resources are usually created in the argocd namespace.
+  namespace: argocd
+
+spec:
+  # Argo CD project used to group applications and define access rules.
+  # The default project is sufficient for this conceptual example.
+  project: default
+
+  source:
+    # Git repository that acts as the single source of truth.
+    # Argo CD reads the desired Kubernetes state from this repository.
+    repoURL: https://github.com/angie86-cmd/devops-foundation-teilpruefung-1.git
+
+    # Git branch, tag, or commit that should be synchronized.
+    # In this example, the main branch represents the approved desired state.
+    targetRevision: main
+
+    # Path inside the repository that contains the Kubernetes manifests.
+    # Argo CD will apply the YAML files stored in this directory.
+    path: kubernetes/base
+
+  destination:
+    # Kubernetes API server where the application should be deployed.
+    # This value points to the same cluster where Argo CD is running.
+    server: https://kubernetes.default.svc
+
+    # Target namespace for the development environment.
+    # The namespace should exist in the cluster or be created separately.
+    namespace: dev
+
+  syncPolicy:
+    automated:
+      # Automatically delete Kubernetes resources that were removed from Git.
+      # This keeps the cluster aligned with the repository state.
+      prune: true
+
+      # Automatically repair configuration drift.
+      # If the live cluster state differs from Git, Argo CD tries to restore it.
+      selfHeal: true

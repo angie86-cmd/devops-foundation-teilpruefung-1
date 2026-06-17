@@ -1,0 +1,19 @@
+# Kubernetes ConfigMap for non-sensitive microservice configuration.
+# ConfigMaps are used to separate configuration from container images,
+# which supports portability across environments such as dev, staging, and production.
+
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  # Name of the ConfigMap referenced by the Deployment.
+  name: microservice-config
+
+data:
+  # Runtime environment of the application.
+  # In different environments, this value could be changed to staging or production.
+  NODE_ENV: "development"
+
+  # Logging level used by the microservice.
+  # This is an example of operational configuration managed outside the image.
+  LOG_LEVEL: "info"
